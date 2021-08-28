@@ -57,6 +57,27 @@ def memes():
   em = discord.Embed(title=title,  color=discord.Color.from_rgb(0, 255, 255))
   em.set_image(url=url)
   return em
+
+async def pa(embeds,ctx):
+      message=await ctx.send(embed=embeds[0])
+      pag=0
+      await message.add_reaction("◀️")
+      await message.add_reaction("▶️")
+      def check(reaction, user):          
+          return user == ctx.author and str(reaction.emoji) in ["◀️", "▶️"]
+      while True:
+          try:
+              reaction, user= await client.wait_for("reaction_add", timeout=360, check=check)
+              #await message.remove_reaction(reaction, user)
+              if str(reaction.emoji) == "▶️" and pag+1!=len(embeds):
+                  pag+=1
+                  await message.edit(embed=embeds[pag])
+              elif str(reaction.emoji) == "◀️" and pag!=0:
+                  pag-=1
+                  await message.edit(embed=embeds[pag])
+          except asyncio.TimeoutError:
+             break
+
 def fact():
   reddit = praw.Reddit(client_id ='', 
                      client_secret = '', 
