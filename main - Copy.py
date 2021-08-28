@@ -107,6 +107,25 @@ def welcome():
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
+async def pa(embeds,ctx):
+    message=await ctx.send(embed=embeds[0])
+    pag=0
+    await message.add_reaction("◀️")
+    await message.add_reaction("▶️")
+    def check(reaction, user):          
+      return user == ctx.author and str(reaction.emoji) in ["◀️", "▶️"]
+    while True:
+      try:
+          reaction, user= await client.wait_for("reaction_add", timeout=360, check=check)
+          #await message.remove_reaction(reaction, user)
+          if str(reaction.emoji) == "▶️" and pag+1!=len(embeds):
+              pag+=1
+              await message.edit(embed=embeds[pag])
+          elif str(reaction.emoji) == "◀️" and pag!=0:
+              pag-=1
+              await message.edit(embed=embeds[pag])
+      except asyncio.TimeoutError:
+         break
 
 
 @client.event
